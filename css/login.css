@@ -1,0 +1,140 @@
+* {
+    font-family: "Ubuntu", sans-serif;
+    font-weight: bold;
+  }
+  
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #FEC106;
+    overflow: hidden;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideInFromTop {
+    from {
+      transform: translateY(-50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  .login-container {
+    background-color: #FEC106;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.5s ease-out;
+  }
+  
+  .login-container img {
+    width: 100px;
+    height: 100px;
+    display: block;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    animation: slideInFromTop 0.5s ease-out 0.2s both;
+  }
+  
+  form ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  form li {
+    margin-bottom: 15px;
+    opacity: 0;
+    animation: slideInFromTop 0.5s ease-out forwards;
+  }
+  
+  form li:nth-child(1) {
+    animation-delay: 0.6s;
+  }
+  
+  form li:nth-child(2) {
+    animation-delay: 0.8s;
+  }
+  
+  form li:nth-child(3) {
+    animation-delay: 1s;
+  }
+  
+  form li:nth-child(4) {
+    animation-delay: 1.2s;
+  }
+  
+  form li:nth-child(5) {
+    animation-delay: 1.4s;
+  }
+  
+  form label {
+    font-size: 8pt;
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  input[type="email"],
+  input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #F87113;
+    border-radius: 4px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+  }
+  
+  input[type="email"]:focus,
+  input[type="password"]:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(248, 113, 19, 0.3);
+  }
+  
+  input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #F87113;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  input[type="submit"]:hover {
+    background-color: #e56200;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  fieldset {
+    color: brown;
+    border: #F87113 solid 3px;
+    animation: fadeIn 0.5s ease-out 0.4s both;
+  }
+  
+  a {
+    text-decoration: none;
+    color: #F87113;
+    transition: color 0.3s ease;
+  }
+  
+  a:hover {
+    color: #e56200;
+  }
+  
