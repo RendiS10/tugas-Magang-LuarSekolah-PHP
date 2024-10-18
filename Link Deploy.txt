@@ -1,2 +1,0 @@
-link Deploy : https://rendis10.github.io/tugas-magang/
-source kode github : https://github.com/RendiS10/tugas-magang

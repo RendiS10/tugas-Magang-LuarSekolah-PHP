@@ -20,6 +20,11 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         header("Location: regist.php");
         exit();
     }
+
+    // Memformat tanggal lahir
+    if (!empty($tanggalLahir)) {
+        $tanggalLahir = date("d/m/Y", strtotime($tanggalLahir));
+    }
 } else {
     // Jika tidak ada data, redirect kembali ke form
     header("Location: regist.php");
@@ -37,33 +42,40 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 </head>
 <body>
 
-<article>
+<article class="<?php echo ($gender == 'Laki-Laki') ? 'article-male' : 'article-female'; ?>">
     <h2>Kartu Anggota</h2>
     <section>
-        <ul>
-            <li>
-                <h3><?php echo htmlspecialchars($nama); ?></h3>
-            </li>
-            <li>
-                <p><strong>Jenis Kelamin:</strong> <?php echo htmlspecialchars($gender); ?></p>
-            </li>
-            <li>
-                <p><strong>Tempat Lahir:</strong> <?php echo htmlspecialchars($tempatLahir); ?></p>
-            </li>
-            <li>
-                <p><strong>Tanggal Lahir:</strong> <?php echo htmlspecialchars($tanggalLahir); ?></p>
-            </li>
-            <li>
-                <p><strong>Alamat:</strong> <?php echo htmlspecialchars($alamat); ?></p>
-            </li>
-            <li>
-                <p><strong>Nomor HP:</strong> <?php echo htmlspecialchars($noHp); ?></p>
-            </li>
-             <li>
-                <p><strong>Username:</strong> <?php echo htmlspecialchars($username); ?></p>
-            </li> 
-</ul>
-</section>
+            <table>
+                <tr>
+                    <td>Nama Lengkap:</td>
+                    <td><?php echo htmlspecialchars($nama); ?></td>
+                </tr>
+                <tr>
+                    <td>Jenis Kelamin:</td>
+                    <td><?php echo htmlspecialchars($gender); ?></td>
+                </tr>
+                <tr>
+                    <td>Tempat Lahir:</td>
+                    <td><?php echo htmlspecialchars($tempatLahir); ?></td>
+                </tr>
+                <tr>
+                    <td>Tanggal Lahir:</td>
+                    <td><?php echo htmlspecialchars($tanggalLahir); ?></td>
+                </tr>
+                <tr>
+                    <td>Alamat:</td>
+                    <td><?php echo htmlspecialchars($alamat); ?></td>
+                </tr>
+                <tr>
+                    <td>Nomor HP:</td>
+                    <td><?php echo htmlspecialchars($noHp); ?></td>
+                </tr>
+                <tr>
+                    <td>Username:</td>
+                    <td><?php echo htmlspecialchars($username); ?></td>
+                </tr>
+            </table>
+        </section>
 </article>
 </body>
 </html>

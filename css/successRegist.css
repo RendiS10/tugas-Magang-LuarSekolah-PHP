@@ -1,31 +1,47 @@
-* {
-  font-family: "Ubuntu", sans-serif;
-  margin: 0px;
-  padding: 0px;
-  box-sizing: border-box;
-}
-
 body {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
 }
 
 article {
-  display: flex;
-  align-items: center;
-  margin: auto;
-  flex-direction: column;
+    background: white; /* Default background */
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 600px;
+    margin: auto;
 }
-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 300px;
-  height: 180px;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+
+/* Tambahkan kelas untuk laki-laki */
+.article-male {
+    background-color: #a5cdf3; /* Warna biru untuk laki-laki */
+    color: black; /* Font berwarna hitam */
+}
+
+/* Tambahkan kelas untuk perempuan */
+.article-female {
+    background-color: #f69d96; /* Warna merah untuk perempuan */
+    color: white; /* Font berwarna putih */
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+td:first-child {
+    font-weight: bold;
+    color: #555;
 }
