@@ -39,7 +39,7 @@
       <img src="../img/FotoProfilNuruddinInstitue.jpg" alt="Logo Nuruddin Institute">
       <fieldset>
         <legend>Action</legend>
-        <form method= "_GET" enctype="multipart/form-data">
+        <form method= "GET" enctype="multipart/form-data">
           <ul>
             <li>
               <label for="nama">Nama Lengkap</label>
