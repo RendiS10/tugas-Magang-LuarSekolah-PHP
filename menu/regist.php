@@ -1,19 +1,20 @@
 <?php 
 // Mulai session
 session_start();
-
 require '../controller/koneksi.php';
 require '../controller/controller.php'; // Include the registration handler
 
-$error = false;
-$registrationSuccess = false;
+$error = ''; // Variabel untuk pesan error atau status registrasi
 
+// Proses form jika ada input dari pengguna
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $error = handleRegistration($koneksi);
+    $result = handleRegistration($koneksi);
 
-    // Jika tidak ada error, anggap registrasi berhasil
-    if (!$error) {
-        $registrationSuccess = true;
+    // Periksa apakah registrasi berhasil atau gagal
+    if ($result === true) {
+        $error = 'success'; // Set 'success' jika registrasi berhasil
+    } else {
+        $error = $result; // Set pesan error jika registrasi gagal
     }
 }
 ?>
@@ -39,18 +40,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <legend>Action</legend>
         <form method="POST" enctype="multipart/form-data">
           <ul>
+            <!-- Form input fields -->
             <li>
               <label for="nama">Nama Lengkap</label>
-              <?php if ($error && empty($_POST['nama'])) :?>
-                <label for="nama" style="color:red">Masukan Nama Lengkap Anda !</label>
-              <?php endif ?>
               <input type="text" name="nama" id="nama" placeholder="Masukan Nama Lengkap Anda!" value="<?php echo htmlspecialchars($_POST['nama'] ?? ''); ?>">
             </li>
             <li>
               <label for="gender">Jenis Kelamin</label>
-              <?php if ($error && empty($_POST['gender'])) :?>
-                <label for="gender" style="color:red">Masukan Jenis Kelamin Anda !</label>
-              <?php endif ?>
               <select name="gender" id="gender">
                 <option value="" disabled <?php echo (empty($_POST['gender'])) ? 'selected' : ''; ?>>Silahkan Pilih</option>
                 <option value="Laki-Laki" <?php echo ($_POST['gender'] ?? '' == 'Laki-Laki') ? 'selected' : ''; ?>>Laki-Laki</option>
@@ -59,37 +55,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </li>
             <li>
               <label for="tempatLahir">Tempat Kota Lahir</label>
-              <?php if ($error && empty($_POST['tempatLahir'])) :?>
-                <label for="tempatLahir" style="color:red">Masukan Kota Lahir Anda !</label>
-              <?php endif ?>
               <input type="text" name="tempatLahir" id="tempatLahir" placeholder="Masukan Tempat Lahir Anda" value="<?php echo htmlspecialchars($_POST['tempatLahir'] ?? ''); ?>">
             </li>
             <li>
               <label for="tanggalLahir">Tanggal Lahir</label>
-              <?php if ($error && empty($_POST['tanggalLahir'])) :?>
-                <label for="tanggalLahir" style="color:red">Masukan Tanggal Lahir Anda !</label>
-              <?php endif ?>
               <input type="date" name="tanggalLahir" id="tanggalLahir" value="<?php echo htmlspecialchars($_POST['tanggalLahir'] ?? ''); ?>">
             </li>
             <li>
               <label for="alamat">Alamat</label>
-              <?php if ($error && empty($_POST['alamat'])) :?>
-                <label for="alamat" style="color:red">Masukan Alamat Anda !</label>
-              <?php endif ?>
               <input type="text" name="alamat" id="alamat" placeholder="Masukan Alamat Anda" value="<?php echo htmlspecialchars($_POST['alamat'] ?? ''); ?>">
             </li>
             <li>
               <label for="noHp">No HP</label>
-              <?php if ($error && empty($_POST['noHp'])) :?>
-                <label for="noHp" style="color:red">Masukan Nomor HP Anda !</label>
-              <?php endif ?>
               <input type="number" name="noHp" id="noHp" placeholder="Masukan Nomor HP Anda" value="<?php echo htmlspecialchars($_POST['noHp'] ?? ''); ?>">
             </li>
             <li>
               <label for="role">Role</label>
-              <?php if ($error && empty($_POST['role'])) :?>
-                <label for="role" style="color:red">Pilih Role Anda !</label>
-              <?php endif ?>
               <select name="role" id="role">
                 <option value="" disabled selected>Pilih Role</option>
                 <option value="Peserta" <?php echo ($_POST['role'] ?? '' == 'Peserta') ? 'selected' : ''; ?>>Peserta</option>
@@ -99,16 +80,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </li>
             <li>
               <label for="username">Username/Email</label>
-              <?php if ($error && empty($_POST['username'])) :?>
-                <label for="username" style="color:red">Masukan Username Yang Akan Anda Pakai!</label>
-              <?php endif ?>
               <input type="email" name="username" id="username" placeholder="Masukan Username/Email Anda!" value="<?php echo htmlspecialchars($_POST['username'] ?? ''); ?>">
             </li>
             <li>
               <label for="password">Password</label>
-              <?php if ($error && empty($_POST['password'])) :?>
-                <label for="password" style="color:red">Masukan Password Yang Akan Anda Pakai !</label>
-              <?php endif ?>
               <input type="password" name="password" id="password" placeholder="Masukan Password Anda!">
             </li>
             <li>
@@ -119,29 +94,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </li>
           </ul>
         </form>
+
+        <!-- SweetAlert untuk notifikasi hasil registrasi -->
+        <?php if ($error === 'success'): ?>
+            <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Registrasi Berhasil',
+                    text: 'Anda telah berhasil mendaftar!',
+                    showConfirmButton: false,
+                    timer: 2000
+                }).then(() => {
+                    window.location.href = 'login.php'; // Redirect ke halaman login setelah sukses
+                });
+            </script>
+        <?php elseif (!empty($error)): ?>
+            <script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Registrasi Gagal',
+                    text: '<?php echo $error; ?>',
+                });
+            </script>
+        <?php endif; ?>
       </fieldset>
     </div>
   </section>
-
-  <!-- SweetAlert untuk menampilkan pesan sukses atau gagal -->
-  <?php if ($registrationSuccess): ?>
-    <script>
-      Swal.fire({
-        icon: 'success',
-        title: 'Registrasi Berhasil',
-        text: 'Akun Anda berhasil dibuat. Silakan login.',
-      }).then(function() {
-        window.location.href = 'login.php';
-      });
-    </script>
-  <?php elseif ($error): ?>
-    <script>
-      Swal.fire({
-        icon: 'error',
-        title: 'Registrasi Gagal',
-        text: 'Mohon Lengkapi Data Anda !.',
-      });
-    </script>
-  <?php endif; ?>
 </body>
 </html>

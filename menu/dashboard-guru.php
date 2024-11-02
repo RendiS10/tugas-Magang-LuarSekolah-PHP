@@ -2,14 +2,14 @@
 session_start();
 require '../controller/koneksi.php';
 
-// Pastikan pengguna adalah admin
-if ($_SESSION['role_user'] != 'Admin') {
+// Pastikan pengguna adalah guru
+if ($_SESSION['role_user'] != 'Guru Ngaji') {
     header("Location: login.php");
     exit();
 }
 
-// Ambil data pengguna
-$query = "SELECT id_user, username, role_user FROM login_user";
+// Ambil data peserta yang diajar
+$query = "SELECT p.id_user, p.nama_lengkap, p.gender FROM peserta p JOIN login_user l ON p.id_user = l.id_user WHERE l.role_user = 'Peserta'";
 $result = $koneksi->query($query);
 ?>
 
@@ -18,26 +18,26 @@ $result = $koneksi->query($query);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin</title>
+    <title>Dashboard Guru</title>
     <link rel="stylesheet" href="../css/dashboard.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
-    <h1>Dashboard Admin</h1>
+    <h1>Dashboard Guru</h1>
     <table>
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Username</th>
-                <th>Role</th>
+                <th>ID User</th>
+                <th>Nama Lengkap</th>
+                <th>Jenis Kelamin</th>
             </tr>
         </thead>
         <tbody>
-            <?php while ($user = $result->fetch_assoc()): ?>
+            <?php while ($peserta = $result->fetch_assoc()): ?>
                 <tr>
-                    <td><?php echo $user['id_user']; ?></td>
-                    <td><?php echo htmlspecialchars($user['username']); ?></td>
-                    <td><?php echo htmlspecialchars($user['role_user']); ?></td>
+                    <td><?php echo htmlspecialchars($peserta['id_user']); ?></td>
+                    <td><?php echo htmlspecialchars($peserta['nama_lengkap']); ?></td>
+                    <td><?php echo htmlspecialchars($peserta['gender']); ?></td>
                 </tr>
             <?php endwhile; ?>
         </tbody>

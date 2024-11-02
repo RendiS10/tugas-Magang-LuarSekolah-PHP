@@ -1,5 +1,5 @@
 <?php
-function handleLogin($username, $password) {
+function handleLogin($username, $password, &$success) { // Added &$success parameter
     global $koneksi;
 
     // Menggunakan prepared statement untuk keamanan
@@ -19,15 +19,17 @@ function handleLogin($username, $password) {
             $_SESSION['username'] = $user['username'];
             $_SESSION['role_user'] = $user['role_user'];
 
-            // Mengarahkan pengguna berdasarkan peran mereka
+            // Tentukan URL pengalihan berdasarkan peran pengguna
             if ($user['role_user'] == 'Peserta') {
-                header("Location: peserta_dashboard.php"); // Sesuaikan halaman dashboard peserta
+                $_SESSION['redirect_url'] = '../menu/dashboard-peserta.php'; // Sesuaikan halaman dashboard peserta
             } elseif ($user['role_user'] == 'Admin') {
-                header("Location: admin_dashboard.php"); // Sesuaikan halaman dashboard admin
+                $_SESSION['redirect_url'] = '../menu/dashboard-admin.php'; // Sesuaikan halaman dashboard admin
             } elseif ($user['role_user'] == 'Guru Ngaji') {
-                header("Location: guru_dashboard.php"); // Sesuaikan halaman dashboard guru ngaji
+                $_SESSION['redirect_url'] = '../menu/dashboard-guru.php'; // Sesuaikan halaman dashboard guru ngaji
             }
-            exit();
+
+            $success = true; // Set status sukses
+            return ''; // Kembalikan kosong jika tidak ada error
         } else {
             return "Password salah.";
         }
@@ -37,7 +39,6 @@ function handleLogin($username, $password) {
 }
 
 function handleRegistration($koneksi) {
-    // Inisialisasi variabel untuk menghindari error "undefined index"
     $nama = $_POST['nama'] ?? '';
     $gender = $_POST['gender'] ?? '';
     $tempatLahir = $_POST['tempatLahir'] ?? '';
@@ -48,29 +49,37 @@ function handleRegistration($koneksi) {
     $password = $_POST['password'] ?? '';
     $role = $_POST['role'] ?? null;
 
-    // Memeriksa apakah ada field yang kosong
+    // Cek jika ada field yang kosong
     if (empty($username) || empty($password) || empty($nama) || empty($gender) || empty($tempatLahir) || empty($tanggalLahir) || empty($alamat) || empty($noHp) || empty($role)) {
-        return "Mohon Lengkapi Data Anda!";
+        return "Mohon lengkapi data Anda!";
+    }
+
+    // Cek jika email sudah terdaftar
+    $stmt_check = $koneksi->prepare("SELECT * FROM login_user WHERE username = ?");
+    $stmt_check->bind_param("s", $username);
+    $stmt_check->execute();
+    $result_check = $stmt_check->get_result();
+
+    if ($result_check->num_rows > 0) {
+        return "Email sudah digunakan.";
     }
 
     // Hash password sebelum disimpan
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    // Menyimpan data ke dalam tabel login_user
+    // Insert data ke tabel login_user
     $stmt = $koneksi->prepare("INSERT INTO login_user (username, password, role_user) VALUES (?, ?, ?)");
     $stmt->bind_param("sss", $username, $hashedPassword, $role);
 
     if ($stmt->execute()) {
-        // Mendapatkan ID pengguna yang baru saja ditambahkan
         $id_user = $koneksi->insert_id;
 
-        // Menyimpan data tambahan di tabel peserta
+        // Insert data tambahan di tabel peserta
         $stmt2 = $koneksi->prepare("INSERT INTO peserta (id_user, nama_lengkap, gender, tempat_kota_lahir, tanggal_lahir, alamat, no_hp) VALUES (?, ?, ?, ?, ?, ?, ?)");
         $stmt2->bind_param("issssss", $id_user, $nama, $gender, $tempatLahir, $tanggalLahir, $alamat, $noHp);
 
         if ($stmt2->execute()) {
-            // Registrasi berhasil
-            return false;
+            return true; // Kembali 'true' jika registrasi berhasil
         } else {
             return "Gagal menyimpan data peserta!";
         }
@@ -78,4 +87,28 @@ function handleRegistration($koneksi) {
         return "Gagal menyimpan data login!";
     }
 }
+
+function handleLogout() {
+    session_start();
+
+    // Hapus semua sesi
+    $_SESSION = [];
+
+    // Hapus cookie sesi jika ada
+    if (ini_get("session.use_cookies")) {
+        $params = session_get_cookie_params();
+        setcookie(session_name(), '', time() - 42000,
+            $params["path"], $params["domain"],
+            $params["secure"], $params["httponly"]
+        );
+    }
+
+    // Hancurkan sesi
+    session_destroy();
+
+    // Alihkan ke halaman login
+    header("Location: login.php");
+    exit();
+}
+
 ?>

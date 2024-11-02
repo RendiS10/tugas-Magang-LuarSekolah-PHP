@@ -1,25 +1,18 @@
-<?php 
+<?php
 session_start();
-require '../controller/koneksi.php'; // Pastikan file ini menghubungkan ke database
-require '../controller/controller.php'; // Include the login handler 
+require '../controller/koneksi.php'; 
+require '../controller/controller.php'; 
 
 $error = '';
-$loginSuccess = false;
-$roleUser = '';
+$success = false; // Menyimpan status sukses login
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
     
-    // Cek apakah login berhasil atau gagal
-    $result = handleLogin($username, $password);
-    if ($result === "Peserta" || $result === "Admin" || $result === "Guru Ngaji") {
-        $loginSuccess = true;
-        $roleUser = $result;
-    } else {
-        $error = $result;
-    }
+    $error = handleLogin($username, $password, $success); // Pass by reference for success
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -62,7 +55,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </li>
                     </ul>
                 </form>
-                
                 <!-- Pesan error jika login gagal -->
                 <?php if (!empty($error)): ?>
                     <script>
@@ -73,26 +65,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         });
                     </script>
                 <?php endif; ?>
-                
+
                 <!-- Pesan sukses jika login berhasil -->
-                <?php if ($loginSuccess): ?>
+                <?php if ($success): ?>
                     <script>
                         Swal.fire({
                             icon: 'success',
                             title: 'Login Berhasil',
-                            text: 'Anda berhasil login!',
-                        }).then(function() {
-                            // Arahkan pengguna ke halaman yang sesuai dengan peran
-                            <?php if ($roleUser == 'Peserta'): ?>
-                                window.location.href = 'peserta_dashboard.php';
-                            <?php elseif ($roleUser == 'Admin'): ?>
-                                window.location.href = 'admin_dashboard.php';
-                            <?php elseif ($roleUser == 'Guru Ngaji'): ?>
-                                window.location.href = 'guru_dashboard.php';
-                            <?php endif; ?>
+                            text: 'Selamat datang!',
+                        }).then(() => {
+                            window.location.href = "<?php echo $_SESSION['redirect_url']; ?>"; // Redirect to the user's dashboard
                         });
                     </script>
                 <?php endif; ?>
+
             </fieldset>
         </div>
     </section>
