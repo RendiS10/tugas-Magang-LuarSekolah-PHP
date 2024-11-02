@@ -1,44 +1,23 @@
-<?php
+<?php 
 session_start();
 require '../controller/koneksi.php'; // Pastikan file ini menghubungkan ke database
+require '../controller/controller.php'; // Include the login handler 
+
+$error = '';
+$loginSuccess = false;
+$roleUser = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
-
-    global $koneksi;
-
-    // Menggunakan prepared statement untuk keamanan
-    $stmt = $koneksi->prepare("SELECT * FROM login_user WHERE username = ?");
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    // Cek apakah username ada di database
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-
-        // Verifikasi password dengan password_verify()
-        if (password_verify($password, $user['password'])) {
-            // Password benar, simpan informasi login ke session
-            $_SESSION['id_user'] = $user['id_user'];
-            $_SESSION['username'] = $user['username'];
-            $_SESSION['role_user'] = $user['role_user'];
-
-            // Mengarahkan pengguna berdasarkan peran mereka
-            if ($user['role_user'] == 'Peserta') {
-                header("Location: peserta_dashboard.php"); // Sesuaikan halaman dashboard peserta
-            } elseif ($user['role_user'] == 'Admin') {
-                header("Location: admin_dashboard.php"); // Sesuaikan halaman dashboard admin
-            } elseif ($user['role_user'] == 'Guru Ngaji') {
-                header("Location: guru_dashboard.php"); // Sesuaikan halaman dashboard guru ngaji
-            }
-            exit();
-        } else {
-            echo "Password salah.";
-        }
+    
+    // Cek apakah login berhasil atau gagal
+    $result = handleLogin($username, $password);
+    if ($result === "Peserta" || $result === "Admin" || $result === "Guru Ngaji") {
+        $loginSuccess = true;
+        $roleUser = $result;
     } else {
-        echo "Username tidak ditemukan.";
+        $error = $result;
     }
 }
 ?>
@@ -53,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="../css/responsive.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -82,9 +62,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </li>
                     </ul>
                 </form>
+                
                 <!-- Pesan error jika login gagal -->
                 <?php if (!empty($error)): ?>
-                    <p style="color:red;"><?php echo $error; ?></p>
+                    <script>
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Login Gagal',
+                            text: '<?php echo $error; ?>',
+                        });
+                    </script>
+                <?php endif; ?>
+                
+                <!-- Pesan sukses jika login berhasil -->
+                <?php if ($loginSuccess): ?>
+                    <script>
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Login Berhasil',
+                            text: 'Anda berhasil login!',
+                        }).then(function() {
+                            // Arahkan pengguna ke halaman yang sesuai dengan peran
+                            <?php if ($roleUser == 'Peserta'): ?>
+                                window.location.href = 'peserta_dashboard.php';
+                            <?php elseif ($roleUser == 'Admin'): ?>
+                                window.location.href = 'admin_dashboard.php';
+                            <?php elseif ($roleUser == 'Guru Ngaji'): ?>
+                                window.location.href = 'guru_dashboard.php';
+                            <?php endif; ?>
+                        });
+                    </script>
                 <?php endif; ?>
             </fieldset>
         </div>
