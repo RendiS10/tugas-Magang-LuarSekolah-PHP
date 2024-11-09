@@ -1,4 +1,3 @@
-
 -- Create database
 CREATE DATABASE kuyngaji;
 USE kuyngaji;
@@ -84,3 +83,41 @@ CREATE TABLE peserta_kelas (
     FOREIGN KEY (id_peserta) REFERENCES peserta(id_peserta),
     FOREIGN KEY (id_kelas) REFERENCES kelas(id_kelas)
 );
+
+-- Create program_pelatihan table
+CREATE TABLE program_pelatihan (
+    id_program INT AUTO_INCREMENT PRIMARY KEY,
+    nama_program VARCHAR(100) NOT NULL,
+    deskripsi TEXT,
+    durasi VARCHAR(50),
+    level VARCHAR(50)
+);
+
+-- Insert initial data into program_pelatihan table
+INSERT INTO program_pelatihan (nama_program, deskripsi, durasi, level) VALUES
+('Pelatihan Membaca Kitab Kuning', 'Pelatihan untuk pemula dalam membaca kitab kuning.', '4 Minggu', 'Pemula'),
+('Pelatihan Tajwid', 'Kelas tajwid untuk memahami hukum-hukum dalam membaca Al-Quran.', '6 Minggu', 'Menengah'),
+('Pelatihan Qiraat', 'Mempelajari berbagai macam qiraat dalam membaca Al-Quran.', '8 Minggu', 'Lanjutan');
+
+-- Create peserta_program_pelatihan table for many-to-many relationship between peserta and program_pelatihan
+CREATE TABLE peserta_program_pelatihan (
+    id_peserta INT,
+    id_program INT,
+    PRIMARY KEY (id_peserta, id_program),
+    FOREIGN KEY (id_peserta) REFERENCES peserta(id_peserta),
+    FOREIGN KEY (id_program) REFERENCES program_pelatihan(id_program)
+);
+
+-- Create berita table
+CREATE TABLE berita (
+    id_berita INT AUTO_INCREMENT PRIMARY KEY,
+    judul VARCHAR(100) NOT NULL,
+    konten TEXT NOT NULL,
+    tanggal_terbit DATE DEFAULT CURRENT_DATE,
+    penulis VARCHAR(100)
+);
+
+-- Insert initial data into berita table
+INSERT INTO berita (judul, konten, penulis) VALUES
+('Pendaftaran Program Pelatihan Terbuka', 'Pendaftaran untuk program pelatihan telah dibuka.', 'Admin'),
+('Kegiatan Muhasabah Akhir Tahun', 'Kegiatan muhasabah akan dilaksanakan pada akhir tahun.', 'Admin');

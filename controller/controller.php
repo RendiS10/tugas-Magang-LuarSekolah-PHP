@@ -21,11 +21,11 @@ function handleLogin($username, $password, &$success) { // Added &$success param
 
             // Tentukan URL pengalihan berdasarkan peran pengguna
             if ($user['role_user'] == 'Peserta') {
-                $_SESSION['redirect_url'] = '../menu/dashboard-peserta.php'; // Sesuaikan halaman dashboard peserta
+                $_SESSION['redirect_url'] = '../menu/peserta/dashboard-peserta.php'; // Sesuaikan halaman dashboard peserta
             } elseif ($user['role_user'] == 'Admin') {
-                $_SESSION['redirect_url'] = '../menu/dashboard-admin.php'; // Sesuaikan halaman dashboard admin
+                $_SESSION['redirect_url'] = '../menu/admin/dashboard-admin.php'; // Sesuaikan halaman dashboard admin
             } elseif ($user['role_user'] == 'Guru Ngaji') {
-                $_SESSION['redirect_url'] = '../menu/dashboard-guru.php'; // Sesuaikan halaman dashboard guru ngaji
+                $_SESSION['redirect_url'] = '../menu/guru/dashboard-guru.php'; // Sesuaikan halaman dashboard guru ngaji
             }
 
             $success = true; // Set status sukses
