@@ -71,43 +71,89 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/dashboard.css">
+
+    <!-- Link Font Awesome untuk ikon -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
   <?php include("../template/sidebar-peserta.php")?>
+
     <div class="container mt-5" style="margin-left: 260px;">
-        <h1 class="mb-4">Selamat Datang, <?php echo htmlspecialchars($peserta['nama_lengkap']); ?></h1>
+        <h4 class="mb-4">Selamat Datang, <?php echo htmlspecialchars($peserta['nama_lengkap']); ?></h4>
+
+        <!-- Data Peserta -->
+    <!-- Data Peserta -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <strong><i class="fas fa-user"></i> Profil Peserta</strong>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered">
+            <tr>
+                <th><i class="fas fa-user-circle"></i> Username</th>
+                <td><?php echo htmlspecialchars($_SESSION['username']); ?></td>
+            </tr>
+            <tr>
+                <th><i class="fas fa-cogs"></i> Role</th>
+                <td><?php echo htmlspecialchars($_SESSION['role_user']); ?></td>
+            </tr>
+            <tr>
+                <th><i class="fas fa-map-marker-alt"></i> Alamat</th>
+                <td><?php echo htmlspecialchars($peserta['alamat']); ?></td>
+            </tr>
+            <tr>
+                <th><i class="fas fa-phone-alt"></i> No HP</th>
+                <td><?php echo htmlspecialchars($peserta['no_hp']); ?></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+
+        <!-- Program yang Sedang Diikuti -->
         <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <strong><i class="fas fa-cogs"></i> Program yang Sedang Diikuti</strong>
+            </div>
             <div class="card-body">
-                <p><strong>Username:</strong> <?php echo htmlspecialchars($_SESSION['username']); ?></p>
-                <p><strong>Role:</strong> <?php echo htmlspecialchars($_SESSION['role_user']); ?></p>
-                <p><strong>Alamat:</strong> <?php echo htmlspecialchars($peserta['alamat']); ?></p>
-                <p><strong>No HP:</strong> <?php echo htmlspecialchars($peserta['no_hp']); ?></p>
-                <!-- Tampilkan data lainnya sesuai kebutuhan -->
+                <?php if ($current_programs): ?>
+                    <ul class="list-group">
+                        <?php foreach ($current_programs as $program): ?>
+                            <li class="list-group-item"><i class="fas fa-check-circle"></i> <?php echo htmlspecialchars($program['nama_program']); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php else: ?>
+                    <p><i class="fas fa-times-circle"></i> Anda belum mengikuti program pelatihan apapun.</p>
+                <?php endif; ?>
             </div>
         </div>
 
-        <h2 class="mb-3">Program yang Sedang Diikuti</h2>
-        <ul class="list-group mb-4">
-            <?php foreach ($current_programs as $program): ?>
-                <li class="list-group-item"><?php echo htmlspecialchars($program['nama_program']); ?></li>
-            <?php endforeach; ?>
-        </ul>
-
-        <h2 class="mb-3">Pilih Program Pelatihan</h2>
-        <form method="POST">
-            <div class="form-group">
-                <?php while ($program = $result_program->fetch_assoc()): ?>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="programs[]" value="<?php echo $program['id_program']; ?>"
-                            <?php echo in_array($program['id_program'], $current_program_ids) ? 'checked' : ''; ?>>
-                        <label class="form-check-label">
-                            <?php echo htmlspecialchars($program['nama_program']); ?>
-                        </label>
-                    </div>
-                <?php endwhile; ?>
+        <!-- Pilih Program Pelatihan -->
+        <div class="card mb-4">
+            <div class="card-header bg-warning text-white">
+                <strong><i class="fas fa-list-ul"></i> Pilih Program Pelatihan</strong>
             </div>
-            <button type="submit" class="btn btn-primary">Simpan Pilihan</button>
-        </form>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="form-group">
+                        <div class="row">
+                            <?php while ($program = $result_program->fetch_assoc()): ?>
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="programs[]" value="<?php echo $program['id_program']; ?>"
+                                            <?php echo in_array($program['id_program'], $current_program_ids) ? 'checked' : ''; ?>>
+                                        <label class="form-check-label">
+                                            <i class="fas fa-clipboard-list"></i> <?php echo htmlspecialchars($program['nama_program']); ?>
+                                        </label>
+                                    </div>
+                                </div>
+                            <?php endwhile; ?>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Pilihan</button>
+                </form>
+            </div>
+        </div>
     </div>
 
     <!-- Bootstrap JS and dependencies -->

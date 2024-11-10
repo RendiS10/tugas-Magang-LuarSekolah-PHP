@@ -65,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             if ($stmt->execute()) {
-                header("Location: keloladata.php");
+                header("Location: dashboard-admin.php");
                 exit();
             } else {
                 $errors[] = "Gagal menambahkan data ke tabel yang sesuai.";
@@ -90,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php include('../template/sidebar.php'); ?>
 
     <div class="container" style="margin-left: 270px; padding-top: 20px;">
-        <h2>Tambah Data</h2>
+        <h4>Tambah Data User</h4>
 
         <?php if (!empty($errors)): ?>
             <div class="alert alert-danger">
@@ -166,6 +166,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
 
             <button type="submit" class="btn btn-primary">Tambah Peserta</button>
+            <br>
+            <br>
         </form>
     </div>
 </body>

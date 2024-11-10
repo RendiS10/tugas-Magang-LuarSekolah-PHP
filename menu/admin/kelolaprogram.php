@@ -20,42 +20,89 @@ $result = $koneksi->query($query);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola Program Pelatihan</title>
     <link rel="stylesheet" href="../../css/keloladata.css">
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"> <!-- Menambahkan Font Awesome -->
+    <style>
+        /* Gaya khusus untuk tombol tambah program pelatihan */
+        .btn-add {
+            margin-bottom: 15px;
+            font-weight: bold;
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-add:hover {
+            background-color: #218838;
+        }
+
+        /* Gaya untuk tabel dan tombol aksi */
+        .table th, .table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        /* Styling tombol aksi */
+        .btn {
+            font-size: 0.9rem;
+            padding: 6px 12px;
+        }
+
+        .table td a,
+        .table td button {
+            margin-right: 10px;
+        }
+
+        /* Responsivitas untuk tabel */
+        @media (max-width: 768px) {
+            .table th, .table td {
+                font-size: 0.8rem;
+            }
+            .btn-add {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Menyertakan sidebar -->
     <?php include('../template/sidebar.php'); ?>
 
-    <div class="container" style="margin-left: 270px; padding-top: 20px;">
-        <h2>Kelola Program Pelatihan</h2>
-        
-        <!-- Tombol untuk menambah program pelatihan -->
-        <a href="tambahprogram.php" class="btn btn-primary mb-3">Tambah Program Pelatihan</a>
-        
+    <div class="main-content">
+        <h4>Kelola Program Pelatihan</h4>
+
+        <!-- Tombol untuk menambah program pelatihan dengan ikon -->
+        <a href="tambahprogram.php" class="btn btn-add btn-sm btn-primary">
+            <i class="fas fa-plus-circle"></i> Tambah Program Pelatihan
+        </a>
+
         <!-- Tabel untuk menampilkan data program pelatihan -->
         <table class="table table-bordered">
             <thead>
                 <tr>
+                    <th>No</th>
                     <th>ID Program</th>
                     <th>Nama Program</th>
-                    <th>Deskripsi</th>
                     <th>Durasi</th>
                     <th>Level</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
+                <?php $no = 1; ?>
                 <?php while ($program = $result->fetch_assoc()): ?>
                     <tr>
+                        <td><?php echo $no++; ?></td>
                         <td><?php echo $program['id_program']; ?></td>
                         <td><?php echo htmlspecialchars($program['nama_program']); ?></td>
-                        <td><?php echo htmlspecialchars($program['deskripsi']); ?></td>
                         <td><?php echo htmlspecialchars($program['durasi']); ?></td>
                         <td><?php echo htmlspecialchars($program['level']); ?></td>
                         <td>
-                            <a href="editprogram.php?id=<?php echo $program['id_program']; ?>" class="btn btn-warning btn-sm">Edit</a>
-                            <button class="btn btn-danger btn-sm" onclick="deleteProgram(<?php echo $program['id_program']; ?>)">Hapus</button>
+                            <!-- Tombol Edit dengan ikon -->
+                            <a href="editprogram.php?id=<?php echo $program['id_program']; ?>" class="btn btn-primary btn-sm">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <!-- Tombol Hapus dengan ikon -->
+                            <button class="btn btn-danger btn-sm" onclick="deleteProgram(<?php echo $program['id_program']; ?>)">
+                                <i class="fas fa-trash-alt"></i> Hapus
+                            </button>
                         </td>
                     </tr>
                 <?php endwhile; ?>
@@ -63,6 +110,7 @@ $result = $koneksi->query($query);
         </table>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
     // Fungsi untuk menghapus program pelatihan
     function deleteProgram(idProgram) {

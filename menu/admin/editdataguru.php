@@ -88,6 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Data Guru Ngaji</title>
     <link rel="stylesheet" href="../../css/keloladata.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <!-- Menyertakan sidebar -->
@@ -104,7 +105,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         <?php endif; ?>
 
-        <form action="editdataguru.php?id=<?php echo $idGuru; ?>" method="post" class="mt-4">
+        <form id="editForm" action="editdataguru.php?id=<?php echo $idGuru; ?>" method="post" class="mt-4">
             <div class="form-group">
                 <label for="nama_lengkap">Nama Lengkap:</label>
                 <input type="text" name="nama_lengkap" id="nama_lengkap" class="form-control" value="<?php echo htmlspecialchars($namaLengkap); ?>" required>
@@ -149,8 +150,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input type="text" name="fotogurungaji" id="fotogurungaji" class="form-control" value="<?php echo htmlspecialchars($fotoGuruNgaji); ?>">
             </div>
 
+            <a href="keloladataguru.php" class="btn btn-danger">Batal</a>
             <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+            <br>
+            <br>
         </form>
     </div>
+
+    <script>
+        // Konfirmasi menggunakan SweetAlert sebelum submit
+        document.getElementById('editForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Mencegah form disubmit langsung
+
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: "Data guru ngaji akan diperbarui.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, simpan perubahan!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Jika dikonfirmasi, kirim form
+                    document.getElementById('editForm').submit();
+                }
+            });
+        });
+    </script>
+
 </body>
-</html> 
+</html>

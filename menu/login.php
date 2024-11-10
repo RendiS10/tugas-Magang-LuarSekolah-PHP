@@ -74,11 +74,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             title: 'Login Berhasil',
                             text: 'Selamat datang!',
                         }).then(() => {
-                            window.location.href = "<?php echo $_SESSION['redirect_url']; ?>"; // Redirect to the user's dashboard
+                            // Jika role adalah Guru Ngaji, tampilkan pesan 'Menu belum tersedia'
+                            <?php if ($_SESSION['role_user'] == 'Guru Ngaji'): ?>
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: 'Menu Guru Ngaji Belum Tersedia',
+                                    text: 'Fitur ini masih dalam pengembangan.',
+                                }).then(() => {
+                                    window.location.href = 'login.php'; // Redirect ke halaman login setelah tampil pesan
+                                });
+                            <?php else: ?>
+                                window.location.href = "<?php echo $_SESSION['redirect_url']; ?>"; // Redirect ke dashboard sesuai role
+                            <?php endif; ?>
                         });
                     </script>
                 <?php endif; ?>
-
             </fieldset>
         </div>
     </section>

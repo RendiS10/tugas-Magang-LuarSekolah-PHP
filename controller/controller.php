@@ -25,7 +25,9 @@ function handleLogin($username, $password, &$success) { // Added &$success param
             } elseif ($user['role_user'] == 'Admin') {
                 $_SESSION['redirect_url'] = '../menu/admin/dashboard-admin.php'; // Sesuaikan halaman dashboard admin
             } elseif ($user['role_user'] == 'Guru Ngaji') {
-                $_SESSION['redirect_url'] = '../menu/guru/dashboard-guru.php'; // Sesuaikan halaman dashboard guru ngaji
+                $_SESSION['redirect_url'] = 'javascript:void(0);'; // Tidak ada pengalihan
+                $success = true; // Set status sukses
+                return 'Menu Guru Ngaji belum tersedia.'; // Mengembalikan pesan untuk alert
             }
 
             $success = true; // Set status sukses
@@ -110,5 +112,4 @@ function handleLogout() {
     header("Location: login.php");
     exit();
 }
-
 ?>

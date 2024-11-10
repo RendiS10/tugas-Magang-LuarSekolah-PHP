@@ -65,36 +65,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
+    <?php include("../template/sidebar.php")?>
 
-<div class="container">
+<div class="container" style="margin-left: 270px; padding-top: 20px;">
     <h2>Edit Data Peserta</h2>
-    <form method="POST" id="editForm">
-        <label for="nama_lengkap">Nama Lengkap:</label>
-        <input type="text" id="nama_lengkap" name="nama_lengkap" value="<?php echo htmlspecialchars($peserta['nama_lengkap']); ?>" required>
+    
+    <?php if (!empty($errors)): ?>
+        <div class="alert alert-danger">
+            <?php foreach ($errors as $error): ?>
+                <p><?php echo $error; ?></p>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
 
-        <label for="gender">Gender:</label>
-        <select id="gender" name="gender" required>
-            <option value="Laki-laki" <?php echo $peserta['gender'] == 'Laki-laki' ? 'selected' : ''; ?>>Laki-laki</option>
-            <option value="Perempuan" <?php echo $peserta['gender'] == 'Perempuan' ? 'selected' : ''; ?>>Perempuan</option>
-        </select>
+    <form method="POST" id="editForm" class="mt-4">
+        <div class="form-group">
+            <label for="nama_lengkap">Nama Lengkap:</label>
+            <input type="text" id="nama_lengkap" name="nama_lengkap" class="form-control" value="<?php echo htmlspecialchars($peserta['nama_lengkap']); ?>" required>
+        </div>
 
-        <label for="tempat_kota_lahir">Tempat Kota Lahir:</label>
-        <input type="text" id="tempat_kota_lahir" name="tempat_kota_lahir" value="<?php echo htmlspecialchars($peserta['tempat_kota_lahir']); ?>">
+        <div class="form-group">
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender" class="form-control" required>
+                <option value="Laki-laki" <?php echo $peserta['gender'] == 'Laki-laki' ? 'selected' : ''; ?>>Laki-laki</option>
+                <option value="Perempuan" <?php echo $peserta['gender'] == 'Perempuan' ? 'selected' : ''; ?>>Perempuan</option>
+            </select>
+        </div>
 
-        <label for="tanggal_lahir">Tanggal Lahir:</label>
-        <input type="date" id="tanggal_lahir" name="tanggal_lahir" value="<?php echo htmlspecialchars($peserta['tanggal_lahir']); ?>">
+        <div class="form-group">
+            <label for="tempat_kota_lahir">Tempat Kota Lahir:</label>
+            <input type="text" id="tempat_kota_lahir" name="tempat_kota_lahir" class="form-control" value="<?php echo htmlspecialchars($peserta['tempat_kota_lahir']); ?>">
+        </div>
 
-        <label for="alamat">Alamat:</label>
-        <textarea id="alamat" name="alamat"><?php echo htmlspecialchars($peserta['alamat']); ?></textarea>
+        <div class="form-group">
+            <label for="tanggal_lahir">Tanggal Lahir:</label>
+            <input type="date" id="tanggal_lahir" name="tanggal_lahir" class="form-control" value="<?php echo htmlspecialchars($peserta['tanggal_lahir']); ?>">
+        </div>
 
-        <label for="no_hp">No. HP:</label>
-        <input type="text" id="no_hp" name="no_hp" value="<?php echo htmlspecialchars($peserta['no_hp']); ?>">
+        <div class="form-group">
+            <label for="alamat">Alamat:</label>
+            <textarea id="alamat" name="alamat" class="form-control"><?php echo htmlspecialchars($peserta['alamat']); ?></textarea>
+        </div>
 
-        <label for="hobi">Hobi:</label>
-        <input type="text" id="hobi" name="hobi" value="<?php echo htmlspecialchars($peserta['hobi']); ?>">
+        <div class="form-group">
+            <label for="no_hp">No. HP:</label>
+            <input type="text" id="no_hp" name="no_hp" class="form-control" value="<?php echo htmlspecialchars($peserta['no_hp']); ?>">
+        </div>
 
-        <button type="submit" id="submitBtn">Simpan Perubahan</button>
-        <button type="button" onclick="window.location.href='keloladata.php'">Batal</button>
+        <div class="form-group">
+            <label for="hobi">Hobi:</label>
+            <input type="text" id="hobi" name="hobi" class="form-control" value="<?php echo htmlspecialchars($peserta['hobi']); ?>">
+        </div>
+
+        <button type="submit" id="submitBtn" class="btn btn-primary">Simpan Perubahan</button>
+        <button type="button" onclick="window.location.href='keloladata.php'" class="btn btn-secondary">Batal</button>
+        <br>
+        <br>
     </form>
 </div>
 

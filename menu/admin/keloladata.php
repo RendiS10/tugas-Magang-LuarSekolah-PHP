@@ -1,5 +1,5 @@
-<?php include("../template/sidebar.php") ?>
-<?php
+<?php 
+include("../template/sidebar.php");
 session_start();
 require '../../controller/koneksi.php';
 
@@ -9,9 +9,10 @@ if ($_SESSION['role_user'] != 'Admin') {
     exit();
 }
 
-// Query untuk mendapatkan data peserta dan program yang dipilih
+// Query untuk mendapatkan data peserta dan detailnya
 $query = "
-    SELECT p.id_peserta, p.nama_lengkap, p.gender, p.tempat_kota_lahir, p.tanggal_lahir, p.alamat, p.no_hp, GROUP_CONCAT(pp.nama_program SEPARATOR ', ') AS program_dipilih
+    SELECT p.id_peserta, p.nama_lengkap, p.gender, p.tempat_kota_lahir, p.tanggal_lahir, p.alamat, p.no_hp, 
+           GROUP_CONCAT(pp.nama_program SEPARATOR ', ') AS program_dipilih
     FROM peserta p
     LEFT JOIN peserta_program_pelatihan ppp ON p.id_peserta = ppp.id_peserta
     LEFT JOIN program_pelatihan pp ON ppp.id_program = pp.id_program
@@ -27,30 +28,25 @@ $result = $koneksi->query($query);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola Data Peserta</title>
     <link rel="stylesheet" href="../../css/keloladata.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Menyertakan sidebar -->
     <?php include('../template/sidebar.php'); ?>
 
     <div class="main-content">
-        <h2>Kelola Data Peserta</h2>
-        
-        <!-- Tombol untuk menambah data peserta -->
-        <a href="tambahdata.php" class="btn-add">Tambah Data Peserta</a>
-        
+        <h4>Kelola Data Peserta</h4>
+    
         <!-- Tabel untuk menampilkan data peserta -->
-        <table>
+        <table class="table">
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>ID Peserta</th>
                     <th>Nama Lengkap</th>
-                    <th>Gender</th>
-                    <th>Tempat, Tanggal Lahir</th>
-                    <th>Alamat</th>
-                    <th>Program Dipilih</th>
+                    <th>ID Peserta</th>
                     <th>Aksi</th>
+                    <th>Detail</th>
                 </tr>
             </thead>
             <tbody>
@@ -58,15 +54,28 @@ $result = $koneksi->query($query);
                 <?php while ($peserta = $result->fetch_assoc()): ?>
                     <tr>
                         <td><?php echo $no++; ?></td>
+                        <td><?php echo $peserta['nama_lengkap']; ?></td>
                         <td><?php echo $peserta['id_peserta']; ?></td>
-                        <td><?php echo htmlspecialchars($peserta['nama_lengkap']); ?></td>
-                        <td><?php echo htmlspecialchars($peserta['gender']); ?></td>
-                        <td><?php echo htmlspecialchars($peserta['tempat_kota_lahir']) . ', ' . $peserta['tanggal_lahir']; ?></td>
-                        <td><?php echo htmlspecialchars($peserta['alamat']); ?></td>
-                        <td><?php echo htmlspecialchars($peserta['program_dipilih']); ?></td>
                         <td>
-                            <a href="editdatapeserta.php?id=<?php echo $peserta['id_peserta']; ?>" class="btn-edit">Edit</a>
-                            <button class="btn-delete" onclick="deletePeserta(<?php echo $peserta['id_peserta']; ?>)">Hapus</button>
+                            <a href="editdatapeserta.php?id=<?php echo $peserta['id_peserta']; ?>" class="btn btn-primary">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <button class="btn btn-danger" onclick="deletePeserta(<?php echo $peserta['id_peserta']; ?>)">
+                                <i class="fas fa-trash-alt"></i> Hapus
+                            </button>
+                        </td>
+                        <td>
+                            <!-- Tombol Detail dengan data peserta di atribut data- -->
+                            <button class="btn btn-info" onclick="showDetailModal(this)" 
+                                    data-id="<?php echo $peserta['id_peserta']; ?>"
+                                    data-nama="<?php echo htmlspecialchars($peserta['nama_lengkap']); ?>"
+                                    data-gender="<?php echo htmlspecialchars($peserta['gender']); ?>"
+                                    data-ttl="<?php echo htmlspecialchars($peserta['tempat_kota_lahir']) . ', ' . $peserta['tanggal_lahir']; ?>"
+                                    data-alamat="<?php echo htmlspecialchars($peserta['alamat']); ?>"
+                                    data-nohp="<?php echo htmlspecialchars($peserta['no_hp']); ?>"
+                                    data-program="<?php echo !empty($peserta['program_dipilih']) ? htmlspecialchars($peserta['program_dipilih']) : 'Belum ada program yang dipilih'; ?>">
+                                <i class="fas fa-eye"></i> Detail
+                            </button>
                         </td>
                     </tr>
                 <?php endwhile; ?>
@@ -74,8 +83,81 @@ $result = $koneksi->query($query);
         </table>
     </div>
 
+    <!-- Modal Detail Peserta -->
+    <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title" id="detailModalLabel">
+                        <i class="fas fa-user-circle"></i> Detail Peserta
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Tabel untuk Detail Peserta -->
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <th>ID Peserta</th>
+                                <td><i class="fas fa-id-card"></i> <span id="idPeserta"></span></td>
+                            </tr>
+                            <tr>
+                                <th>Nama Lengkap</th>
+                                <td><i class="fas fa-user"></i> <span id="namaLengkap"></span></td>
+                            </tr>
+                            <tr>
+                                <th>Gender</th>
+                                <td><i class="fas fa-venus-mars"></i> <span id="gender"></span></td>
+                            </tr>
+                            <tr>
+                                <th>Tempat, Tanggal Lahir</th>
+                                <td><i class="fas fa-birthday-cake"></i> <span id="ttl"></span></td>
+                            </tr>
+                            <tr>
+                                <th>Alamat</th>
+                                <td><i class="fas fa-map-marker-alt"></i> <span id="alamat"></span></td>
+                            </tr>
+                            <tr>
+                                <th>No HP</th>
+                                <td><i class="fas fa-phone-alt"></i> <span id="noHp"></span></td>
+                            </tr>
+                            <tr>
+                                <th>Program Dipilih</th>
+                                <td><i class="fas fa-book"></i> <span id="programDipilih"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times-circle"></i> Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-    // Fungsi untuk menghapus peserta
+    function showDetailModal(button) {
+        // Mengambil data dari atribut data- tombol
+        document.getElementById('idPeserta').textContent = button.getAttribute('data-id');
+        document.getElementById('namaLengkap').textContent = button.getAttribute('data-nama');
+        document.getElementById('gender').textContent = button.getAttribute('data-gender');
+        document.getElementById('ttl').textContent = button.getAttribute('data-ttl');
+        document.getElementById('alamat').textContent = button.getAttribute('data-alamat');
+        document.getElementById('noHp').textContent = button.getAttribute('data-nohp');
+        
+        // Mendapatkan data program dan memeriksa apakah ada program yang dipilih
+        const programDipilih = button.getAttribute('data-program');
+        document.getElementById('programDipilih').textContent = programDipilih !== 'Belum ada program yang dipilih' 
+            ? programDipilih 
+            : 'Belum ada program yang dipilih';
+
+        // Menampilkan modal
+        new bootstrap.Modal(document.getElementById('detailModal')).show();
+    }
+
     function deletePeserta(idPeserta) {
         if (confirm("Apakah Anda yakin ingin menghapus peserta ini?")) {
             window.location.href = 'deletepeserta.php?id=' + idPeserta;
